@@ -1,6 +1,6 @@
 import { AuthProvider } from "@pankod/refine-core";
 import { notification } from "@pankod/refine-antd";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { browserSessionPersistence, createUserWithEmailAndPassword, getAuth, sendPasswordResetEmail, setPersistence, signInWithEmailAndPassword } from "firebase/auth";
 import { firebaseApp } from "firebaseConfig";
 
 
@@ -25,22 +25,28 @@ signInWithEmailAndPassword(auth, email, password)
     const errorCode = error.code;
     const errorMessage = error.message;
   });
-
-        // if(email === "a@test.co"){
-        //    localStorage.setItem(TOKEN_KEY, `${email}-${password}`);
-        //     return Promise.resolve(); 
-        // }
-        // else return
-        
+    
     },
+    
     register: async ({ email, password }) => {
-        try {
-            await authProvider.login({ email, password });
-            return Promise.resolve();
-        } catch (error) {
-            return Promise.reject();
-        }
+
+        const auth = getAuth(firebaseApp);
+        createUserWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+    if (user) {
+        localStorage.setItem(TOKEN_KEY, `${email}-${password}`);
+        return Promise.resolve(); 
+    }
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+  });
     },
+    
     updatePassword: async () => {
         notification.success({
             message: "Updated Password",
@@ -49,6 +55,17 @@ signInWithEmailAndPassword(auth, email, password)
         return Promise.resolve();
     },
     forgotPassword: async ({ email }) => {
+        const auth = getAuth();
+        sendPasswordResetEmail(auth, email)
+        .then(() => {
+        // Password reset email sent!
+        // ..
+    })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // ..
+        });
         notification.success({
             message: "Reset Password",
             description: `Reset password link sent to "${email}"`,

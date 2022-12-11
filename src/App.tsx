@@ -27,18 +27,48 @@ function App() {
       Layout={Layout}
       ReadyPage={ReadyPage}
       catchAll={<ErrorComponent />}
-      routerProvider={routerProvider}
-      LoginPage={() => (
-        <AuthPage
-            type="login"
-            formProps={{
-                initialValues: {
-                    email: "demo@refine.dev",
-                    password: "demodemo",
-                },
-            }}
-        />
-    )}
+      routerProvider={{
+        ...routerProvider,
+        routes: [
+          {
+            path: "/login",
+            element: (
+                <AuthPage
+                    type="login"
+                    formProps={{
+                        initialValues: {
+                            email: "welcome@gesund.ai",
+                            password: "demodemo",
+                        },
+                    }}
+                />
+            ),
+        },
+          {
+            path: "/register",
+            element: (
+                <AuthPage
+                    type="register"
+                    formProps={{
+                        initialValues: {
+                            email: "register@gesund.ai",
+                            password: "demodemo",
+                        },
+                    }}
+                />
+            ),
+        },
+        {
+            path: "/forgot-password",
+            element: <AuthPage type="forgotPassword" />,
+        },
+        {
+            path: "/update-password",
+            element: <AuthPage type="updatePassword" />,
+        },
+        ],
+    }}
+      LoginPage={AuthPage}
       resources= {[
         {
           name : "posts",
