@@ -22,7 +22,7 @@ const RenderAuthContent = (content: React.ReactNode) => {
             <Link to="/">
                 <img
                     style={{ marginBottom: 26 }}
-                    src="/images/fine-foods-login.svg"
+                    src="https://www.gesund.ai/gesundLogo.svg"
                     alt="Logo"
                     width="100%"
                 />

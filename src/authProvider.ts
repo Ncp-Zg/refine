@@ -1,59 +1,61 @@
 import { AuthProvider } from "@pankod/refine-core";
 import { notification } from "@pankod/refine-antd";
-import { browserSessionPersistence, createUserWithEmailAndPassword, getAuth, sendPasswordResetEmail, setPersistence, signInWithEmailAndPassword } from "firebase/auth";
-import { firebaseApp } from "firebaseConfig";
+import { browserSessionPersistence, createUserWithEmailAndPassword, getAuth, sendPasswordResetEmail, setPersistence, signInWithEmailAndPassword, updatePassword } from "firebase/auth";
+import { auth, firebaseApp } from "firebaseConfig";
 
 
 
 export const TOKEN_KEY = "refine-auth";
 
 export const authProvider: AuthProvider = {
+
     login: async ({ email, password }) => {
 
         const auth = getAuth(firebaseApp);
-signInWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-    // Signed in 
-    const user = userCredential.user;
-    if (user) {
-        localStorage.setItem(TOKEN_KEY, `${email}-${password}`);
-        return Promise.resolve(); 
-    }
-    // ...
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-  });
-    
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+            // Signed in 
+                const user = userCredential.user;
+                if (user) {
+                    localStorage.setItem(TOKEN_KEY, `${email}-${password}`);
+                    return Promise.resolve(); 
+                }
+            // ...
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+            });
     },
     
     register: async ({ email, password }) => {
 
         const auth = getAuth(firebaseApp);
         createUserWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-    // Signed in 
-    const user = userCredential.user;
-    if (user) {
-        localStorage.setItem(TOKEN_KEY, `${email}-${password}`);
-        return Promise.resolve(); 
-    }
-    // ...
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-  });
+            .then((userCredential) => {
+                // Signed in 
+                const user = userCredential.user;
+                if (user) {
+                    localStorage.setItem(TOKEN_KEY, `${email}-${password}`);
+                    return Promise.resolve(); 
+                }           
+                // ...
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+            });
     },
     
     updatePassword: async () => {
+        
         notification.success({
             message: "Updated Password",
             description: "Password updated successfully",
         });
         return Promise.resolve();
     },
+
     forgotPassword: async ({ email }) => {
         const auth = getAuth();
         sendPasswordResetEmail(auth, email)
@@ -72,10 +74,12 @@ signInWithEmailAndPassword(auth, email, password)
         });
         return Promise.resolve();
     },
+
     logout: () => {
         localStorage.removeItem(TOKEN_KEY);
         return Promise.resolve();
     },
+
     checkError: () => Promise.resolve(),
     checkAuth: () => {
         const token = localStorage.getItem(TOKEN_KEY);
@@ -85,6 +89,7 @@ signInWithEmailAndPassword(auth, email, password)
 
         return Promise.reject();
     },
+
     getPermissions: () => Promise.resolve(),
     getUserIdentity: async () => {
         const token = localStorage.getItem(TOKEN_KEY);
