@@ -2,7 +2,6 @@
 
 import { Refine } from "@pankod/refine-core";
 import {
-  notificationProvider,
   Layout,
   ReadyPage,
   ErrorComponent,
@@ -15,8 +14,11 @@ import dataProvider from "@pankod/refine-simple-rest";
 import { authProvider } from "authProvider";
 import { PostCreate, PostEdit, PostList, PostShow } from "pages/posts";
 import { AuthPage } from "pages/auth";
+import { notificationProvider } from "providers/notificationProvider";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
+  
   return (
     <Refine
       //@ts-ignore  
@@ -79,6 +81,7 @@ function App() {
         }
       ]}
     />
+    
     
   );
 }
