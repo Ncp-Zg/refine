@@ -13,10 +13,13 @@
     "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^12.8.3",
     "@types/jest": "^26.0.23",
+    "chart.js": "^4.0.1",
     "firebase": "^9.15.0",
     "react": "^18.2.0",
+    "react-chartjs-2": "^5.0.1",
     "react-dom": "^18.2.0",
     "react-scripts": "^5.0.0",
+    "react-toastify": "^9.1.1",
     "refine-firebase": "^1.0.28",
     "web-vitals": "^1.1.1"
   },

@@ -1,6 +1,6 @@
 import { AuthProvider } from "@pankod/refine-core";
 import { notification } from "@pankod/refine-antd";
-import { browserSessionPersistence, createUserWithEmailAndPassword, getAuth, sendPasswordResetEmail, setPersistence, signInWithEmailAndPassword, updatePassword } from "firebase/auth";
+import { browserSessionPersistence, createUserWithEmailAndPassword, getAuth, reauthenticateWithCredential, sendPasswordResetEmail, setPersistence, signInWithEmailAndPassword, updatePassword, updateProfile } from "firebase/auth";
 import { auth, firebaseApp } from "firebaseConfig";
 
 
@@ -11,15 +11,29 @@ export const authProvider: AuthProvider = {
 
     login: async ({ email, password }) => {
 
-        const auth = getAuth(firebaseApp);
+        const auth = getAuth(firebaseApp)
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-            // Signed in 
-                const user = userCredential.user;
+                //@ts-ignore
+                updateProfile(auth.currentUser, {
+                    displayName: "Jane Q. User"
+                  }).then(() => {
+                    console.log("updateProfile");
+                    const user = userCredential.user;
                 if (user) {
+                    console.log(user);
                     localStorage.setItem(TOKEN_KEY, `${email}-${password}`);
                     return Promise.resolve(); 
                 }
+                    // Profile updated!
+                    // ...
+                  }).catch((error) => {
+                    // An error occurred
+                    // ...
+                  });
+                
+            // Signed in 
+                
             // ...
             })
             .catch((error) => {
@@ -29,24 +43,25 @@ export const authProvider: AuthProvider = {
     },
     
     register: async ({ email, password }) => {
-
-        const auth = getAuth(firebaseApp);
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                // Signed in 
-                const user = userCredential.user;
-                if (user) {
-                    localStorage.setItem(TOKEN_KEY, `${email}-${password}`);
-                    return Promise.resolve(); 
-                }           
-                // ...
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-            });
+      
+         createUserWithEmailAndPassword(auth, email, password)
+             .then((userCredential) => {
+                 // Signed in 
+                 const user = userCredential.user;
+                 console.log(userCredential);
+                 if (user) {
+                    // userCredential.user.auth.currentUser.auth.displayName = "test";
+                     localStorage.setItem(TOKEN_KEY, `${email}-${password}`);
+                     return Promise.resolve();
+                 }
+                 // ...
+             })
+             .catch((error) => {
+                 const errorCode = error.code;
+                 const errorMessage = error.message;
+             });
     },
-    
+       
     updatePassword: async () => {
         
         notification.success({
@@ -68,6 +83,7 @@ export const authProvider: AuthProvider = {
             const errorMessage = error.message;
             // ..
         });
+        
         notification.success({
             message: "Reset Password",
             description: `Reset password link sent to "${email}"`,
@@ -104,3 +120,7 @@ export const authProvider: AuthProvider = {
         });
     },
 };
+
+function async(currentUser: import("@firebase/auth").User | null, arg1: { displayName: string; photoURL: string; }) {
+    throw new Error("Function not implemented.");
+}
